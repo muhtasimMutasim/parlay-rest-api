@@ -72,8 +72,9 @@ def language_analyze( input_language, output_language, data ):
     
     # translate text
     translated_txt = gt.translate(text=data)
-    
-    # print( f"\n\n\nTRANSLATION:\n {translated}\n\n" )
+
+       
+    print( f"\n\n\nTRANSLATION language_analyze:\n {translated_txt}\n\n" )
     return translated_txt
     
     
@@ -102,6 +103,7 @@ def translated_sentiment(data: str, input_language: str, output_language: str, r
 
     # Translates and returns text
     translated_txt = gt.translate(text=data)
+    print( f"\n\n\nTRANSLATION translated_sentiment:\n {translated_txt}\n\n" )
     sentiment_analysis = vader_analyze( translated_txt )
     return {"input Language": input_language, "output language": output_language, "data": sentiment_analysis }
 
@@ -137,6 +139,7 @@ def translate(data: str, input_language: str, output_language: str, request: Req
     if resp == False:
         # If desired language is not supported then 
         resp = f"The Language(s) is not supported, please try again with different language."
+        print(f"\n\n{resp}\n\n")
         return {"input Language": input_language, "output language": output_language, "data": resp}
         
     
