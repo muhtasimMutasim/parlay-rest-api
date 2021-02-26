@@ -78,7 +78,7 @@ def lyric_translation():
     # data = data.split("\n")
 
     endpoint = "translate"
-    in_lang = "es"
+    in_lang = "spanish"
     out_lang = "english"
     ep = f"{endpoint}/{in_lang}/{out_lang}"
 
@@ -122,16 +122,84 @@ def test_translator():
 
     # Taking spanish song and translating to english
     resp_json = lyric_translation()
+    print(f"\n\n\n\n\n Lyric Translation JSON: \n{resp_json}")
     data = resp_json['data']
-    # print(resp_json)
+    print(resp_json)
 
     # Sending Vader a request to analyze translation
     vader_resp = vader_response( data )
+    print(f"\n\n\n\n\nRESP: \n{vader_resp}")
     vader_resp = vader_resp['data']
 
     # print(vader_resp)
     for i in vader_resp:
         print( i )
+
+
+
+def test_non_english():
+
+    song = file_data( f"{script_dir}/data/song_lyrics" )
+    non_english_data = vader_non_english_response(song)
+
+    a = "----------------NON ENGLISH RESPONSE-------------------"
+    print( f"\n\n{a}\n{non_english_data}\n{a}\n\n" )
+
+
+
+def custom_message():
+    
+    """
+        Function sends custom messages to vader
+    """
+
+    ip = sys.argv[1]
+    port = sys.argv[2]
+    custom_message = sys.argv[3]
+    print("\n\nInside custom function")
+    json_data = None
+
+
+    endpoint = "vader/"
+    url = f"http://{ip}:{port}/"
+    print( f"\n\nSending request to url {url} for testing API\n\n\n" )
+    
+    if custom_message != "":
+        
+
+        endpoint = endpoint + custom_message
+        print( f"\n\n ------URL: {url + endpoint}\n\n")
+        r = requests.post( url  + endpoint )
+        json_data = r.json()
+        print( f"\n\n ------{json_data}\n\n")
+        data = json_data['data'][0]
+        a = f"\n\nText: {data['line']}\n"
+        a += f"Negative: {data['neg']}\n"
+        a += f"Neutral: {data['neu']}\n"
+        a += f"Positive: {data['pos']}\n"
+        a += f"Compound: {data['compound']}\n\n"
+        print( f"\n{a}\n")
+        return json_data
+    
+    alt_message = "The product really sucked!"
+    endpoint = endpoint + alt_message
+    print( f"\n\n ------URL: {url + endpoint}\n\n")
+
+    r = requests.post( url  + endpoint )
+    json_data = r.json()
+    print( f"\n\n ------{json_data}\n\n")
+    data = json_data['data'][0]
+    a = f"\n\nText: {data['line']}\n"
+    a += f"Negative: {data['neg']}\n"
+    a += f"Neutral: {data['neu']}\n"
+    a += f"Positive: {data['pos']}\n"
+    a += f"Compound: {data['compound']}\n\n"
+    print( f"\n{a}\n")
+    
+    print("Custom request is not working.")
+    return json_data
+
+
 
 
 def main():
@@ -144,14 +212,9 @@ def main():
     """
     test()
     test_translator()
-
-
-    song = file_data( f"{script_dir}/data/song_lyrics" )
-    non_english_data = vader_non_english_response(song)
-
-    a = "----------------NON ENGLISH RESPONSE-------------------"
-    print( f"\n\n{a}\n{non_english_data}\n{a}\n\n" )
-
+    test_non_english()
+    
+    custom_message()
 
 if __name__ == "__main__":
 	main()
